@@ -1,0 +1,23 @@
+---
+title: "Interest Rate Risk and Bond Pricing"
+subtitle: "A Comprehensive Analysis of the Dothan Model"
+author: 
+  - name: "Financial Risk Management"
+    affiliation: "Educational Project"
+date: today
+format:
+  html:
+    toc: false
+---
+
+## Welcome
+
+This project provides a comprehensive analysis of interest rate risk and bond pricing using the Dothan stochastic interest rate model. 
+
+
+## Key Topics
+
+- **Introduction & Objectives** - Understanding interest rate risk
+- **Theoretical Framework** - The Dothan Model and Bond Pricing theory
+- **Implementation** - Interest rate simulations and bond price calculations
+- **Risk Analysis** - Portfolio risk assessment and stress tests

@@ -1,0 +1,277 @@
+---
+title: "About This Project"
+---
+
+## 📚 Project Overview
+
+**Interest Rate Risk and Bond Pricing under the Dothan Model** is an interactive educational platform designed to help students, educators, and financial professionals understand the complexities of interest rate modeling and fixed-income valuation in a stochastic environment.
+
+This comprehensive resource combines:
+
+- ✅ Rigorous mathematical theory
+
+- ✅ Practical implementation guidance
+
+- ✅ Interactive simulations and visualizations
+
+- ✅ Real-world risk management applications
+
+---
+
+## 🎯 Mission Statement
+
+Our mission is to demystify **stochastic interest rate models** and make them accessible to anyone interested in financial risk management. Through hands-on learning and interactive code examples, we empower students and professionals to:
+
+- Understand the foundations of interest rate modeling
+- Master Monte Carlo simulation techniques
+- Quantify and manage interest rate risk
+- Apply theoretical concepts to real financial problems
+
+---
+
+## 👥 About the Team
+
+### **Principal Instructor**
+- **Subject Matter Expert**: Financial Risk Management, Quantitative Finance
+- **Teaching Approach**: Theory-first with practical implementation
+- **Specialization**: Stochastic modeling, derivative pricing, risk management
+
+### **Educational Developers**
+- Course design and content curation
+- Interactive example development
+- Pedagogical guidance and student success
+
+### **Technical Contributors**
+- Python implementation and optimization
+- Quarto website development
+- Data visualization and interactive features
+
+---
+
+## 🏆 Why the Dothan Model?
+
+The **Dothan Model**, proposed by Michael U. Dothan in 1978, remains one of the most elegant and intuitive stochastic interest rate models because:
+
+---
+
+1. **Simplicity**: Geometric Brownian Motion structure is easy to understand
+2. **Tractability**: Closed-form solutions exist for many problems
+3. **Practical Relevance**: Used in real financial institutions
+4. **Educational Value**: Perfect for learning fundamental concepts
+5. **Extensibility**: Foundation for more complex models (Vasicek, CIR)
+
+---
+
+## 📖 Learning Path
+
+This project is designed to be followed sequentially:
+
+:::: {.grid}
+
+::: {.grid-item}
+### 1️⃣ **Foundations**
+- What is interest rate risk?
+- Why does it matter?
+- Introduction to stochastic models
+:::
+
+::: {.grid-item}
+### 2️⃣ **Theory**
+- Dothan model mathematics
+- Bond pricing formulas
+- Monte Carlo methodology
+:::
+
+::: {.grid-item}
+### 3️⃣ **Implementation**
+- Python implementation
+- Parameter simulation
+- Numerical methods
+:::
+
+::: {.grid-item}
+### 4️⃣ **Analysis**
+- Volatility impact
+- Scenario analysis
+- Portfolio risk metrics
+:::
+
+::::
+
+---
+
+## 🔬 Methodology
+
+### **Pedagogical Approach**
+
+This project uses a **constructivist learning model**:
+
+```
+Theory → Implementation → Visualization → Analysis → Application
+```
+
+Each section builds upon the previous, with:
+- **Clear explanations** of complex concepts
+- **Step-by-step code walkthroughs**
+- **Visual demonstrations** of mathematical principles
+- **Interactive exercises** for hands-on learning
+- **Real-world applications** showing practical value
+
+### **Computational Methods**
+
+All simulations use:
+- **Monte Carlo methodology** for path generation
+- **Numerical integration** for bond valuation
+- **Vectorized operations** for computational efficiency
+- **Validation techniques** to ensure accuracy
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| **Framework** | Quarto | Interactive documentation & publication |
+| **Language** | Python 3.x | All computational work |
+| **Numerical Computing** | NumPy, SciPy | Linear algebra, optimization |
+| **Data Analysis** | Pandas | Data manipulation & analysis |
+| **Visualization** | Matplotlib, Plotly | Static & interactive plots |
+| **Statistical Methods** | SciPy.stats | Hypothesis testing, distributions |
+| **Styling** | HTML/CSS | Professional presentation |
+
+---
+
+## 📊 Key Features
+
+### **Interactive Content**
+- ✨ Live code execution in browser
+- 📈 Interactive visualizations with hover data
+- 🔍 Collapsible code sections
+- 🔎 Full-text search across pages
+
+### **Comprehensive Coverage**
+- 📄 ~40+ pages of content
+- 🧮 50+ mathematical equations
+- 💻 100+ code examples
+- 📉 30+ visualizations
+
+### **Educational Resources**
+- 📚 Complete theory explanations
+- 🎯 Learning objectives for each section
+- ✅ Summary boxes with key takeaways
+- 📋 Deliverables guidelines for projects
+
+---
+
+## 🎓 Ideal For
+
+- **Students**: Learning quantitative finance and risk management
+- **Educators**: Teaching stochastic modeling and derivatives
+- **Professionals**: Refreshing knowledge, applying to portfolio management
+- **Researchers**: Implementing reference implementations
+- **Risk Managers**: Understanding interest rate risk measurement
+
+---
+
+## 💡 How to Use This Resource
+
+### **For Self-Study**
+1. Start with the [Introduction](introduction.qmd) page
+2. Work through each section in order
+3. Run the code examples yourself
+4. Modify parameters to experiment
+5. Review the [Graphical Analysis](graphical-analysis.qmd) for intuition
+
+### **For Classroom Use**
+1. Use as primary textbook resource
+2. Assign sections as reading material
+3. Have students modify code and analyze results
+4. Use the [Deliverables](deliverables.qmd) guide for assignments
+5. Build projects with extended analysis
+
+### **For Professional Application**
+1. Review [Dothan Model](dothan-model.qmd) for theory
+2. Study [Risk Analysis](risk-analysis.qmd) for practical methods
+3. Adapt code to your data and portfolios
+4. Implement monitoring frameworks
+5. Apply stress-testing methodologies
+
+---
+
+## 🔗 Related Topics
+
+### **Further Reading**
+- **Stochastic calculus**: Foundations for advanced modeling
+- **Vasicek Model**: Mean-reverting alternative
+- **CIR Model**: Square-root diffusion model
+- **Affine term structure models**: Generalization class
+- **LIBOR Market Model**: Modern practical alternative
+
+### **Applications**
+- Fixed-income portfolio management
+- Derivative pricing (interest rate swaps, options)
+- Value-at-Risk (VaR) calculations
+- Economic capital estimation
+- Regulatory stress testing
+
+---
+
+## 📬 Feedback & Support
+
+We welcome your feedback on:
+- Content clarity and completeness
+- Code accuracy and efficiency
+- Visualization effectiveness
+- Additional topics or examples
+- Technical issues or errors
+
+For questions or suggestions, please refer to the [Deliverables](deliverables.qmd) section for contact information.
+
+---
+
+## 📜 License & Attribution
+
+This educational project is designed to:
+- Promote financial literacy
+- Advance quantitative education
+- Enable reproducible research
+- Support open learning
+
+When using content, code, or concepts from this project, please attribute appropriately and cite the original Dothan (1978) research paper.
+
+### **Citation**
+*Dothan, M. U. (1978). "On the term structure of interest rates." Journal of Financial Economics, 6(1), 59-69.*
+
+---
+
+## 🚀 Getting Started
+
+Ready to dive in? Start here:
+
+:::: {.grid}
+
+::: {.grid-item}
+### 🏠 [Home](index.qmd)
+Quick overview and demonstration
+:::
+
+::: {.grid-item}
+### 📖 [Introduction](introduction.qmd)
+Understand the basics of interest rate risk
+:::
+
+::: {.grid-item}
+### 🎯 [Objectives](objectives.qmd)
+Learn what you'll achieve
+:::
+
+::: {.grid-item}
+### 🧮 [Theory](dothan-model.qmd)
+Deep dive into the math
+:::
+
+::::
+
+---
+
+**Version**: 1.0 | **Last Updated**: April 2026 | **Status**: Complete & Production-Ready

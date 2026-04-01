@@ -1,0 +1,68 @@
+project:
+  type: website
+  output-dir: _output
+
+website:
+  title: "Interest Rate Risk and Bond Pricing"
+  navbar:
+    title: "Interest Rate Risk and Bond Pricing"
+    background: primary
+    search: true
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Foundations"
+        menu:
+          - text: "Introduction"
+            href: introduction.qmd
+          - text: "Objectives"
+            href: objectives.qmd
+      - text: "Theoretical Framework"
+        menu:
+          - text: "Dothan Model"
+            href: dothan-model.qmd
+          - text: "Bond Pricing"
+            href: bond-pricing.qmd
+      - text: "Implementation"
+        menu:
+          - text: "Simulation"
+            href: simulation.qmd
+          - text: "Bond Pricing Estimation"
+            href: bond-pricing-estimation.qmd
+      - text: "Risk Analysis"
+        menu:
+          - text: "Risk Analysis"
+            href: risk-analysis.qmd
+          - text: "Graphical Analysis"
+            href: graphical-analysis.qmd
+      - text: "Resources"
+        menu:
+          - text: "About Us"
+            href: about-us.qmd
+          - text: "Deliverables"
+            href: deliverables.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    code-fold: true
+    code-summary: "Show code"
+    code-overflow: wrap
+    code-tools: true
+    df-print: paged
+    toc: true
+    toc-depth: 3
+    smooth-scroll: true
+    highlight-style: a11y-dark
+    number-sections: false
+    reference-location: margin
+    citations-hover: true
+    footnotes-hover: true
+
+execute:
+  enabled: true
+  freeze: false
+  error: false
+  eval: true
+  warning: false

@@ -1,0 +1,274 @@
+---
+title: "Project Objectives and Learning Outcomes"
+author: "Financial Risk Management"
+date: today
+---
+
+## Primary Learning Objectives
+
+This project is designed to help you achieve the following objectives:
+
+### 1. Understand Stochastic Interest Rate Models
+**Objective**: Gain theoretical understanding of how interest rates are modeled as random processes.
+
+**What You'll Learn**:
+
+- The limitations of deterministic (constant) interest rate models
+
+- The concept of drift and volatility in continuous-time models
+
+- The difference between real-world and risk-neutral dynamics
+
+- How stochastic models capture interest rate uncertainty
+
+**Skills Developed**:
+
+- Reading and interpreting stochastic differential equations
+
+- Understanding probability distributions in financial modeling
+
+- Recognizing model assumptions and their implications
+
+---
+
+### 2. Study the Dothan Short-Rate Model
+**Objective**: Develop deep expertise in the Dothan model specifically.
+
+**What You'll Learn**:
+
+- The mathematical formulation: $dr_t = \mu r_t dt + \sigma r_t dW_t$
+
+- Why the Dothan model uses geometric Brownian motion
+
+- Key parameters: drift ($\mu$), volatility ($\sigma$), and initial rate ($r_0$)
+
+- Advantages and limitations of the Dothan model
+
+- Comparison with other models (Vasicek, CIR, etc.)
+
+**Skills Developed**:
+
+- Deriving discretized versions of continuous-time models
+
+- Analyzing parameter sensitivity
+
+- Understanding mean reversion properties (or lack thereof)
+
+---
+
+### 3. Simulate Interest Rate Dynamics
+**Objective**: Implement Monte Carlo simulation to generate realistic interest rate scenarios.
+
+**What You'll Learn**:
+
+- The Euler-Maruyama discretization scheme
+
+- Generating correlated random normal variables
+
+- Managing computational efficiency for large-scale simulations
+
+- Assessing simulation convergence and quality
+
+**Python Skills**:
+
+- NumPy for numerical computation
+
+- Array manipulation and vectorization
+
+- Random number generation and seeding
+
+- Performance optimization
+
+**Mathematical Skills**:
+
+- Discrete approximation of continuous processes
+
+- Understanding convergence properties
+
+- Statistical validation of simulations
+
+---
+
+### 4. Price Zero-Coupon Bonds Under Stochastic Interest Rates
+**Objective**: Estimate bond prices using Monte Carlo simulation methods.
+
+**What You'll Learn**:
+
+- Zero-coupon bond valuation formulas
+
+- The connection between bond prices and discount factors
+
+- Monte Carlo pricing methodology
+
+- Convergence of Monte Carlo estimates
+
+- Comparing analytical vs. simulation-based prices
+
+**Skills Developed**:
+
+- Implementing Monte Carlo bond pricing algorithm
+
+- Computing confidence intervals for price estimates
+
+- Validating pricing accuracy
+
+- Understanding the exponential discount principle
+
+---
+
+### 5. Analyze Interest Rate Risk in Fixed-Income Investments
+**Objective**: Quantify how interest rate changes affect bond portfolios.
+
+**What You'll Learn**:
+
+- **Duration and Convexity**: Bond price sensitities to small rate changes
+
+- **Basis Risk**: Mismatch between portfolio duration and liability duration
+
+- **Value at Risk (VaR)**: Estimating potential losses from rate movements
+
+- **Scenario Analysis**: Assessing portfolio behavior under specific rate paths
+
+- **Stress Testing**: Evaluating extreme scenarios (e.g., +2% rate shock)
+
+**Practical Analysis Tasks**:
+
+#### Task 1: Impact of Interest Rate Volatility
+> Understand how uncertainty in rates affects bond prices
+
+**Procedure**:
+
+- Vary volatility: $\sigma = 0.10, 0.15, 0.20, 0.25, 0.30$
+
+- For each volatility level, simulate paths and compute bond prices
+
+- Compare results across volatility levels
+
+- Quantify the **convexity effect** on bond prices
+
+**Key Metric**: 
+$$\text{Price Sensitivity} = \frac{\partial P(\sigma)}{\partial \sigma}$$
+- Analyze: Do bonds with longer maturities suffer more from volatility?
+
+- Insight: Higher volatility → More uncertain future cashflows → ?
+
+#### Task 2: Initial Interest Rate Changes
+> Understand the starting point's impact on future rate distributions
+
+- Vary initial rate: $r_0 = 0.02, 0.03, 0.05$
+
+- Compare resulting bond price distributions
+
+- Analyze: How does the starting rate affect bond price expectations?
+
+- Insight: Under GBM, changes in $r_0$ have multiplicative effects
+
+#### Task 3: Bond Portfolio Risk
+> Analyze a realistic fixed-income portfolio
+
+**Portfolio Composition**:
+
+| Bond | Maturity | Typical Allocation |
+|------|----------|-------------------|
+| Bond A | 2 years | 30% |
+| Bond B | 5 years | 40% |
+| Bond C | 10 years | 30% |
+
+**Metrics to Compute**:
+
+- Portfolio value (weighted sum of bond values)
+
+- Portfolio duration (weighted average maturity)
+
+- Correlation between bond price changes
+
+- Portfolio value distribution
+
+#### Task 4: Interest Rate Shock Scenario
+> Perform a stress test simulating a sudden rate increase
+
+**Scenario**: Rates increase unexpectedly by $\Delta r = +2\%$
+
+**Analysis**:
+
+- Recompute bond prices under the shock
+
+- Calculate individual bond losses
+
+- Calculate portfolio loss
+
+- Estimate percentage loss relative to initial value
+
+- Compare loss across different bonds (duration effect)
+
+**Outcomes**:
+Learn why duration is critical for risk management and how longer-duration bonds are more sensitive to rate shocks.
+
+---
+
+## Learning Outcomes by Section
+
+### Foundations Section
+After completing the Introduction and Objectives:
+
+- [ ] Explain what interest rate risk is and why it matters
+
+- [ ] Describe the inverse relationship between bond prices and interest rates
+
+- [ ] Discuss limitations of deterministic models
+
+- [ ] Articulate project goals and deliverables
+
+### Theory Section
+After studying the Dothan Model and Bond Pricing:
+
+- [ ] Write the stochastic differential equation for the Dothan model
+
+- [ ] Derive the discretized simulation equation
+
+- [ ] Explain the role of drift and volatility
+
+- [ ] State the zero-coupon bond pricing formula
+
+- [ ] Understand risk-neutral valuation principles
+
+### Implementation Section
+After completing Simulation and Bond Pricing Estimation:
+
+- [ ] Implement a Monte Carlo interest rate simulator in Python
+
+- [ ] Generate and validate interest rate paths
+
+- [ ] Price bonds using simulated rate paths
+
+- [ ] Compare simulation results for different parameter values
+
+- [ ] Optimize code for computational efficiency
+
+### Risk Analysis Section
+After analyzing interest rate risk:
+
+- [ ] Perform sensitivity analysis on key parameters
+
+- [ ] Construct a multi-bond portfolio and compute its value
+
+- [ ] Estimate Value-at-Risk for the portfolio
+
+- [ ] Conduct stress tests under extreme scenarios
+
+- [ ] Interpret risk metrics and communicate findings
+
+### Visualization & Communication
+Throughout the project:
+
+- [ ] Create professional visualizations of interest rate paths
+
+- [ ] Plot bond prices as a function of maturity and volatility
+
+- [ ] Visualize portfolio loss distributions
+
+- [ ] Generate publication-quality figures
+
+- [ ] Present findings in a written report
+
+---

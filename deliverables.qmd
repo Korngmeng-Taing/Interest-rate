@@ -1,0 +1,482 @@
+---
+title: "Deliverables and Report Guidelines"
+author: "Financial Risk Management"
+date: today
+---
+
+## Overview
+
+This page provides guidance on preparing your final submission. The project culminates in:
+
+1. **Written Report** (5-8 pages)
+2. **Python Code** (commented and runnable)
+3. **Supporting Materials** (data, visualizations, appendices)
+
+---
+
+## Written Report Structure
+
+Your report should be professional, clearly written, and suitable for presentation to financial decision-makers. Suggested length: **5-8 pages, single-spaced, 12pt font**.
+
+### 1. Executive Summary (½ page)
+
+A concise overview of your analysis, key findings, and main recommendations.
+
+**Include**:
+
+| Element | Details |
+|---------|----------|
+| **Problem** | Why interest rate risk matters for fixed-income investors |
+| **Approach** | Dothan model, Monte Carlo simulation (5,000 paths), portfolio analysis |
+| **Key Findings** | Effect of volatility, initial rates, portfolio risk metrics |
+| **Conclusion** | Risk management implications and recommendations |
+| **Length** | ½ page maximum |
+
+**Example metrics to highlight**:
+- Portfolio duration: ~[X] years
+- Volatility sensitivity: ~[Y]% price change per 1% rate change  
+- Stress test loss under +2% shock: ~[Z]%
+
+**Sample Opening**:
+> "This project applies the Dothan stochastic interest rate model to analyze interest rate risk in a fixed-income portfolio. Using Monte Carlo simulation with 5,000 paths, we estimate zero-coupon bond prices for maturities of 1, 3, 5, and 10 years under baseline and stressed scenarios. Results show that a +2% interest rate shock would reduce the portfolio value by [X]%, with longer-duration bonds suffering disproportionately greater losses."
+
+---
+
+### 2. Introduction (1-1.5 pages)
+
+**Content**:
+- Definition of interest rate risk and its importance in finance
+- Overview of stochastic interest rate models
+- Why the Dothan model is relevant (and its limitations)
+- Project objectives
+
+**Key Points to Address**:
+
+- Why interest rates matter (bond pricing, duration, convexity)
+
+- Limitations of deterministic models
+
+- The Dothan model's simplicity and tractability
+
+- Real-world applications in risk management
+
+**Recommended Structure**:
+
+1. **Interest Rate Risk in Context** (½ page)
+
+   - Impact on bonds, banks, insurance companies
+   - Inverse relationship: $P \uparrow \text{ when } r \downarrow$
+   - Non-linearity (convexity): price changes accelerate at extreme rates
+   
+2. **Stochastic Modeling Paradigm** (¼ page)
+
+   - Why randomness matters: captures uncertainty about future rates
+   - Contrast with deterministic approaches (constant-rate assumption limitation)
+   
+3. **The Dothan Model** (¾ page)
+
+   - Design: geometric Brownian motion $dr_t = \mu r_t dt + \sigma r_t dW_t$
+   - Advantages: simplicity, lognormal rates, closed-form bond prices
+   - Limitations: no mean reversion, potential explosive growth
+   
+4. **Project Scope** (¼ page)
+
+   - Objectives: simulation, pricing, risk analysis
+   - Deliverables: report + code
+
+---
+
+### 3. Model Description (1-1.5 pages)
+
+**Mathematical Foundation** (1 page):
+
+**The Model**:
+$$dr_t = \mu r_t \, dt + \sigma r_t \, dW_t$$
+
+**Parameter Table**:
+
+| Parameter | Symbol | Meaning | Baseline Value |
+|-----------|--------|---------|----------------|
+| Short Rate | $r_t$ | Instantaneous risk-free rate | Variable |
+| Drift | $\mu$ | Expected percentage growth rate | 0.02 (2% p.a.) |
+| Volatility | $\sigma$ | Standard deviation of percentage changes | 0.15 (15% p.a.) |
+| Brownian Motion | $dW_t$ | Random shock term | $\sim N(0, dt)$ |
+
+**Key Properties**:
+
+- Always positive: $r_t > 0$ for all $t$ (if $r_0 > 0$)
+
+- No mean reversion: rates can drift up or down indefinitely
+
+- Lognormal distribution: $r_t \sim \text{LogNormal}(\log r_0 + (\mu - \sigma^2/2)t, \sqrt{\sigma^2 t})$
+
+**Simulation Methodology**:
+
+Present the discretization:
+$$r_{t+\Delta t} = r_t + \mu r_t \Delta t + \sigma r_t \sqrt{\Delta t} Z_t$$
+
+Explain:
+- Why Euler-Maruyama scheme
+- Choice of time step (e.g., $\Delta t = 0.01$)
+- Convergence properties and error analysis
+- Implementation details
+
+**Bond Pricing Theory**:
+
+$$P(t, T) = E_t \left[ \exp\left( -\int_t^T r_s \, ds \right) \right]$$
+
+Explain:
+- Expected value across all paths
+- Discount factor computation
+- Monte Carlo estimation
+- Convergence and standard error
+
+**Include a figure** showing sample interest rate paths.
+
+---
+
+### 4. Simulation Methodology (½-1 page)
+
+**Computational Approach**:
+- Number of paths (e.g., 5,000 or 10,000)
+- Time horizon: 10 years
+- Time step: 0.01 years (approximately 2.5 trading days)
+- Random seed: 42 (for reproducibility)
+
+**Parameter Values**:
+
+| Parameter | Value | Justification |
+|-----------|-------|---------------|
+| $r_0$ | 3% | Current market short rate |
+| $\mu$ | 2% | Historical average drift |
+| $\sigma$ | 15% | Historical volatility estimate |
+| $T$ | 10 years | Long-term horizon, covers full yield curve |
+| $\Delta t$ | 0.01 years | ~2.5 trading days; balance accuracy/speed |
+
+**Validation**:
+- State what validation was performed (e.g., lognormality test)
+- Report test statistics (e.g., K-S test p-value)
+- Conclusion: paths match theoretical distribution
+
+**Include figures**:
+- Histogram of final rates with theoretical distribution
+- Comparison of simulated vs theoretical moments
+
+---
+
+### 5. Bond Pricing Results (1-1.5 pages)
+
+**Baseline Prices**:
+
+Present a table of zero-coupon bond prices:
+
+| Maturity | Price | Std Error | 95% CI |
+|----------|-------|-----------|--------|
+| 1 year | 0.9709 | 0.0003 | [0.9703, 0.9715] |
+| 3 years | 0.9137 | 0.0008 | [0.9121, 0.9153] |
+| 5 years | 0.8517 | 0.0012 | [0.8494, 0.8540] |
+| 10 years | 0.7408 | 0.0018 | [0.7372, 0.7444] |
+
+**Interpret**:
+- Why longer maturities have lower prices
+- Magnitude of discounting effect
+- Accuracy of estimates (small standard errors)
+
+**Sensitivity Analysis**:
+
+Present results for:
+1. **Volatility sensitivity** ($\sigma = 0.10, 0.15, 0.20, 0.30$)
+   - Finding: Higher $\sigma$ → Higher prices
+   - Magnitude: e.g., "+2% to +5% premium for doubling volatility"
+
+2. **Initial rate sensitivity** ($r_0 = 0.02, 0.03, 0.05$)
+   - Finding: Higher $r_0$ → Lower prices
+   - Magnitude: e.g., "1% increase in $r_0$ → 3-5% drop in price"
+
+**Include figures**:
+- Bond prices vs maturity (baseline and sensitivities)
+- Heatmap of prices across parameters
+- Price changes as % of baseline
+
+---
+
+### 6. Risk Analysis (1.5-2 pages)
+
+Document the four tasks:
+
+#### **Task 1: Interest Rate Volatility Impact**
+
+Present:
+- Table comparing prices at $\sigma = 0.10, 0.15, 0.20, 0.30$
+- Key finding: Convexity premium from volatility (e.g., "+3% for σ increasing from 10% to 30%")
+- Insight: Uncertainty has economic value; bonds with longer maturity more exposed
+
+#### **Task 2: Initial Rate Changes**
+
+Present:
+- Table comparing prices at $r_0 = 0.02, 0.03, 0.05$
+- Key finding: Multiplicative effect (e.g., "100bp increase → -5% price change")
+- Insight: Starting point determines entire distribution of future rates
+
+#### **Task 3: Portfolio Risk**
+
+Present:
+- Portfolio composition table (bonds, weights, current prices)
+- Portfolio metrics (duration, weighted maturity)
+- Value-at-Risk calculations
+  - Example: "VaR(95%) = -$23,000" (portfolio loss in worst 5% of scenarios)
+  - Example: "Expected Shortfall(95%) = -$35,000"
+
+Include a figure:
+- Pie chart of portfolio composition
+- Distribution of portfolio values across simulations
+
+#### **Task 4: Stress Test (+2% Shock)**
+
+Present:
+- Comparison of prices before and after shock
+- Portfolio loss: e.g., "-$145,000 (-14.5%)"
+- Individual bond impacts (showing why long bonds hurt most)
+- Interpretation: Duration approximation vs actual loss
+
+Include a figure:
+- Bar chart showing bond price changes
+- Table of losses by bond and aggregate
+
+**Summary of Risk Findings**:
+- Portfolio duration: [X] years
+- Expected loss from 1% rate increase: [X]%
+- Maximum loss in 95th percentile: $[X]
+- Recommendations for risk mitigation
+
+---
+
+### 7. Conclusions (½-1 page)
+
+**Main Takeaways**:
+
+1. **Volatility Paradox**: Higher interest rate uncertainty increases bond prices due to convexity
+2. **Duration Relevance**: Portfolio duration ([X] years) determines first-order rate sensitivity
+3. **Nonlinearity**: Convexity adjustments matter for large shocks beyond duration approximation
+4. **Model Validation**: Simulated paths match theoretical lognormal distribution
+
+**Limitations**:
+
+- Dothan model lacks mean reversion (unrealistic for long horizons)
+- No credit risk (assumed risk-free bonds)
+- No liquidity constraints
+- Parameter uncertainty not quantified
+
+**Applications & Recommendations**:
+
+1. **For Banks**: Use to set exposure limits on fixed-income portfolio
+2. **For Insurance Companies**: Assess liability matching and hedge requirements
+3. **For Investors**: Inform bond allocation and portfolio rebalancing decisions
+4. **Extensions**: Calibrate to real market data, compare other models (Vasicek, CIR)
+
+**Final Thought**:
+> "Understanding how stochastic interest rate movements affect bond values is essential for modern financial risk management. This analysis demonstrates both the elegance of the Dothan model and the importance of quantifying tail risks through simulation-based approaches."
+
+---
+
+## Code Submission Guidelines
+
+Submit well-organized, commented Python code. Can be provided as:
+- Jupyter notebook (`.ipynb`)
+- Python script (`.py`)
+- Or extract from this Quarto project
+
+### Code Quality Checklist
+
+- [ ] **Clear structure**: Functions organized logically
+- [ ] **Docstrings**: Every function has parameter and return documentation
+- [ ] **Comments**: Non-obvious code is explained
+- [ ] **Reproducibility**: Set random seed; results are consistent
+- [ ] **Efficiency**: Vectorized NumPy operations (no slow loops)
+- [ ] **Error handling**: Check for invalid inputs (e.g., negative volatility)
+- [ ] **Testing**: Output validated against theory or benchmarks
+
+### Required Functions
+
+Your code should implement:
+
+1. **`simulate_dothan_paths(r0, mu, sigma, T, dt, n_paths, seed)`**
+   - Input: Parameters and number of paths
+   - Output: Array of shape (n_steps, n_paths) with rates
+   - Must be vectorized efficiently
+
+2. **`price_bond_from_paths(paths, maturity, dt)`**
+   - Input: Simulated paths, maturity, time step
+   - Output: Bond price, standard error, confidence interval
+   - Must compute discount factors correctly
+
+3. **`price_portfolio(paths, bond_dict, dt)`**
+   - Input: Paths, portfolio composition {name: (maturity, weight)}
+   - Output: Portfolio value and individual bond contributions
+   - Must handle multiple bonds
+
+4. **`analyze_sensitivity(param_values, bond_maturities)`**
+   - Input: Range of parameters (rates, volatilities), maturities
+   - Output: DataFrame or table of prices/risks
+   - Used for sensitivity analysis
+
+### Example Code Structure
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy import stats
+
+class DothanModel:
+    """Dothan stochastic interest rate model simulator"""
+    
+    def __init__(self, r0, mu, sigma):
+        """Initialize with model parameters"""
+        pass
+    
+    def simulate(self, T, dt, n_paths, seed=None):
+        """Simulate interest rate paths"""
+        pass
+    
+    def bond_prices(self, paths, maturities):
+        """Price bonds from simulated paths"""
+        pass
+
+class RiskAnalyzer:
+    """Perform risk analysis on bond portfolio"""
+    
+    def __init__(self, model, portfolio_spec):
+        """Initialize with model and portfolio"""
+        pass
+    
+    def value_at_risk(self, paths):
+        """Compute VaR and CVaR"""
+        pass
+    
+    def stress_test(self, shock):
+        """Analyze impact of rate shock"""
+        pass
+
+# Main analysis
+if __name__ == "__main__":
+    # 1. Simulate
+    model = DothanModel(r0=0.03, mu=0.02, sigma=0.15)
+    paths = model.simulate(T=10, dt=0.01, n_paths=5000)
+    
+    # 2. Price bonds
+    prices = model.bond_prices(paths, maturities=[1, 3, 5, 10])
+    
+    # 3. Analyze risk
+    analyzer = RiskAnalyzer(model, portfolio_spec)
+    var, cvar = analyzer.value_at_risk(paths)
+    
+    # 4. Visualize
+    # ... plotting code
+```
+
+---
+
+## Submission Checklist
+
+Before submitting, verify:
+
+### Written Report
+- [ ] 5-8 pages, 12pt font, single-spaced
+- [ ] Clear structure (all 7 sections present)
+- [ ] Professional formatting with figures integrated
+- [ ] Equations rendered correctly (LaTeX)
+- [ ] Tables properly formatted with units
+- [ ] No typos or grammatical errors
+- [ ] References cited (if applicable)
+
+### Code
+- [ ] Python (Python 3.8+)
+- [ ] All required functions implemented
+- [ ] Vectorized and computationally efficient
+- [ ] Comments and docstrings complete
+- [ ] Runs without errors
+- [ ] Results reproducible (seed set)
+- [ ] Includes all 4 task analyses
+
+### Supplementary Materials
+- [ ] Figures: Bond prices, distributions, 3D surfaces
+- [ ] Tables: Summary statistics, sensitivity analysis
+- [ ] Data: Bond prices, simulation outputs (if applicable)
+- [ ] Any special instructions for running code
+
+###  Extra Credit Opportunities
+
+- [ ] **Extensions**: Compare Dothan to Vasicek or CIR model
+- [ ] **Real Data**: Calibrate parameters from historical rate data
+- [ ] **American Options**: Price interest rate options using model
+- [ ] **Parallel Simulation**: Implement using GPU or multiprocessing
+- [ ] **Interactive Dashboard**: Create web app for parameter exploration
+
+---
+
+## Common Pitfalls to Avoid
+
+❌ **Not validating simulation**: Always check distribution of final rates  
+❌ **Ignoring numerical precision**: Small dt → large arrays; balance accuracy/memory  
+❌ **Forgetting random seed**: Results should be reproducible  
+❌ **Slow Python loops**: Use NumPy vectorization  
+❌ **Mis-specifying Bond Pricing**: Discount factors computed incorrectly  
+❌ **Vague interpretations**: Explain *why* results matter, not just *what* happened  
+❌ **Insufficient validation**: Compare to theory, check edge cases  
+
+---
+
+## Assessment Rubric
+
+Your work will be evaluated on:
+
+| Criterion | Weight | Excellent | Good | Fair |
+|-----------|--------|-----------|------|------|
+| **Mathematical Correctness** | 30% | All equations, derivations correct; validation strong | Minor errors corrected; adequate validation | Conceptual errors present |
+| **Code Quality** | 25% | Efficient, well-documented, all functions work | Functional but could be cleaner | Slow, missing comments, bugs |
+| **Simulation & Analysis** | 25% | All 4 tasks complete with deep insights | All tasks done, interpretations basic | Some tasks incomplete |
+| **Documentation** | 15% | Clear writing, figures well-integrated | Generally clear, some gaps | Hard to follow, inadequate figures |
+| **Presentation** | 5% | Professional format, polished | Acceptable quality | Poorly formatted |
+
+**Total**: 100 points  
+**Passing**: 70+ points
+
+---
+
+## Resources for Success
+
+### Recommended Reading
+- Hull, J. C. (2018). *Options, Futures, and Other Derivatives* (10th ed.). Chapter 28-30.
+- Brigo, D., & Mercurio, F. (2006). *Interest Rate Models: Theory and Practice*, Springer.
+
+### Python Libraries
+```python
+pip install numpy pandas matplotlib scipy plotly jupyter
+```
+
+### Sample Testing Code
+```python
+# Validate lognormality
+from scipy import stats
+log_returns = np.log(final_rates / r0)
+ks_stat, pvalue = stats.kstest(log_returns, 'norm')
+assert pvalue > 0.05, "Lognormality test failed"
+
+# Validate moment predictions
+assert abs(final_rates.mean() - r0 * np.exp(mu * T)) < r0 * 0.1
+assert abs(final_rates.std() - expected_std) < expected_std * 0.2
+```
+
+---
+
+## Final Words
+
+This project combines theory, computation, and financial insight. Your submission should demonstrate:
+
+1. **Understanding**: Why interest rate risk matters and how stochastic models help
+2. **Execution**: Correct implementation of simulation and pricing
+3. **Analysis**: Clear interpretation of results and their implications
+4. **Communication**: Professional presentation suitable for stakeholders
+
+Good luck! 🚀

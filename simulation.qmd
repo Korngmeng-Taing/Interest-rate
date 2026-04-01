@@ -1,0 +1,455 @@
+---
+title: "Simulation of Interest Rate Paths"
+author: "Financial Risk Management"
+date: today
+---
+
+## Overview
+
+This section focuses on implementing the **Dothan model simulator** to generate realistic interest rate scenarios. Generating accurate and efficient interest rate paths is the foundation for all subsequent bond pricing and risk analysis.
+
+---
+
+## Discretization Revisited
+
+Recall the **continuous Dothan model**:
+
+$$dr_t = \mu r_t \, dt + \sigma r_t \, dW_t$$
+
+Where:
+- $dr_t$ = instantaneous change in the short rate
+- $\mu$ = percentage drift per unit time
+- $\sigma$ = percentage volatility per unit time
+- $dW_t$ = increments of standard Brownian motion
+
+The **discrete approximation** using Euler-Maruyama is:
+
+$$r_{t+\Delta t} = r_t + \mu r_t \Delta t + \sigma r_t \sqrt{\Delta t} \, Z_t$$
+
+Where:
+
+$Z_t \sim N(0,1)$ are independent standard normal random variables.
+
+---
+
+## Implementation Details
+
+### Parameter Selection
+
+For this project, use these **baseline parameters**:
+
+| Parameter | Symbol | Value | Interpretation |
+|-----------|--------|-------|-----------------|
+| Initial Rate | $r_0$ | 0.03 (3%) | Starting short rate at $t=0$ |
+| Drift | $\mu$ | 0.02 (2% p.a.) | Expected annual percentage growth |
+| Volatility | $\sigma$ | 0.15 (15% p.a.) | Standard deviation of changes |
+| Time Horizon | $T$ | 10 years | Simulation extends to $t=T$ |
+| Time Step | $\Delta t$ | 0.01 years | Each step ≈ 2.5 trading days |
+
+**Python Configuration**:
+```python
+r0 = 0.03     # Initial short rate: 3%
+mu = 0.02     # Drift: 2% per year (growth rate)
+sigma = 0.15  # Volatility: 15% per year (uncertainty)
+T = 10        # Time horizon: 10 years
+dt = 0.01     # Time step: 0.01 years (~2.5 trading days)
+```
+
+### Time Grid
+
+For a 10-year horizon with $\Delta t = 0.01$:
+
+- Number of steps: $n = T / \Delta t = 10 / 0.01 = 1000$
+
+- Total simulation time: ~11 milliseconds on modern hardware
+
+### Random Number Generation
+
+- Use **NumPy's `random.standard_normal()`** for Gaussian draws
+
+- **Set seed** for reproducibility: `np.random.seed(42)`
+
+- **Vectorize** over paths for efficiency (avoid loops where possible)
+
+---
+
+## Complete Simulator
+
+Here's a production-quality implementation:
+
+```{python}
+#| label: complete-dothan-simulator
+#| code-fold: false
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+class DothanSimulator:
+    """Efficient Dothan model interest rate path simulator"""
+    
+    def __init__(self, r0, mu, sigma, T, dt=0.01):
+        """
+        Initialize the simulator
+        
+        Parameters
+        ----------
+        r0 : float
+            Initial short rate (e.g., 0.03 for 3%)
+        mu : float
+            Drift parameter (annual, e.g., 0.02 for 2%)
+        sigma : float
+            Volatility parameter (annual, e.g., 0.15 for 15%)
+        T : float
+            Time horizon in years (e.g., 10)
+        dt : float
+            Time step in years (e.g., 0.01 for ~2.5 trading days)
+        """
+        self.r0 = r0
+        self.mu = mu
+        self.sigma = sigma
+        self.T = T
+        self.dt = dt
+        self.n_steps = int(T / dt)
+        self.time_grid = np.linspace(0, T, self.n_steps)
+        
+        # Precompute constants for efficiency
+        self.drift_coeff = self.mu * self.dt
+        self.diffusion_coeff = self.sigma * np.sqrt(self.dt)
+        
+    def simulate_paths(self, n_paths, seed=None):
+        """
+        Simulate multiple interest rate paths efficiently
+        
+        Parameters
+        ----------
+        n_paths : int
+            Number of paths to simulate (e.g., 10000)
+        seed : int, optional
+            Random seed for reproducibility
+        
+        Returns
+        -------
+        paths : ndarray of shape (n_steps, n_paths)
+            Simulated interest rate paths
+        """
+        if seed is not None:
+            np.random.seed(seed)
+        
+        # Initialize array
+        paths = np.zeros((self.n_steps, n_paths))
+        paths[0, :] = self.r0
+        
+        # Generate all random variables at once (vectorized)
+        Z = np.random.standard_normal((self.n_steps - 1, n_paths))
+        
+        # Simulation loop (vectorized over paths)
+        for t in range(1, self.n_steps):
+            drift = self.drift_coeff * paths[t-1, :]
+            diffusion = self.diffusion_coeff * paths[t-1, :] * Z[t-1, :]
+            paths[t, :] = paths[t-1, :] + drift + diffusion
+            
+            # Optional: enforce positive rates
+            paths[t, :] = np.maximum(paths[t, :], 1e-8)
+        
+        return paths
+    
+    def statistics(self, paths):
+        """Compute comprehensive path statistics"""
+        stats_dict = {
+            'mean_path': np.mean(paths, axis=1),
+            'median_path': np.median(paths, axis=1),
+            'std_path': np.std(paths, axis=1),
+            'min_path': np.min(paths, axis=1),
+            'max_path': np.max(paths, axis=1),
+            'percentile_05': np.percentile(paths, 5, axis=1),
+            'percentile_95': np.percentile(paths, 95, axis=1),
+            'percentile_25': np.percentile(paths, 25, axis=1),
+            'percentile_75': np.percentile(paths, 75, axis=1),
+        }
+        
+        # Final statistics
+        final_rates = paths[-1, :]
+        stats_dict['final_mean'] = np.mean(final_rates)
+        stats_dict['final_median'] = np.median(final_rates)
+        stats_dict['final_std'] = np.std(final_rates)
+        stats_dict['final_min'] = np.min(final_rates)
+        stats_dict['final_max'] = np.max(final_rates)
+        
+        return stats_dict
+    
+    def plot_paths(self, paths, n_sample=100, figsize=(14, 7)):
+        """
+        Visualize simulated paths with confidence bands
+        
+        Parameters
+        ----------
+        paths : ndarray
+            Simulated paths
+        n_sample : int
+            Number of individual paths to plot (for visualization)
+        figsize : tuple
+            Figure size
+        """
+        stats_dict = self.statistics(paths)
+        
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
+        
+        # Left panel: Individual paths with confidence bands
+        sample_indices = np.random.choice(paths.shape[1], n_sample, replace=False)
+        for idx in sample_indices:
+            ax1.plot(self.time_grid, paths[:, idx], alpha=0.15, linewidth=0.8, color='navy')
+        
+        ax1.plot(self.time_grid, stats_dict['mean_path'], 'r-', linewidth=2.5, label='Mean')
+        ax1.plot(self.time_grid, stats_dict['median_path'], 'g--', linewidth=2, label='Median')
+        ax1.fill_between(self.time_grid, 
+                         stats_dict['percentile_05'], 
+                         stats_dict['percentile_95'],
+                         alpha=0.25, color='red', label='5%-95% band')
+        ax1.fill_between(self.time_grid, 
+                         stats_dict['percentile_25'], 
+                         stats_dict['percentile_75'],
+                         alpha=0.25, color='orange', label='25%-75% band')
+        
+        ax1.set_xlabel('Time (years)', fontsize=11, fontweight='bold')
+        ax1.set_ylabel('Interest Rate', fontsize=11, fontweight='bold')
+        ax1.set_title(f'Dothan Model Paths ({paths.shape[1]} simulations)', 
+                      fontsize=12, fontweight='bold')
+        ax1.legend(fontsize=10, loc='best')
+        ax1.grid(True, alpha=0.3)
+        ax1.set_ylim([max(0, stats_dict['min_path'].min() - 0.01), 
+                      stats_dict['max_path'].max() + 0.01])
+        
+        # Right panel: Distribution of final rates
+        final_rates = paths[-1, :]
+        ax2.hist(final_rates, bins=50, density=True, alpha=0.7, color='skyblue', edgecolor='black')
+        
+        # Overlay theoretical lognormal (for reference)
+        log_returns = np.log(final_rates / self.r0)
+        expected_log_mean = (self.mu - 0.5 * self.sigma**2) * self.T
+        expected_log_std = self.sigma * np.sqrt(self.T)
+        theoretical_pdf = stats.lognorm.pdf(final_rates, 
+                                            s=expected_log_std, 
+                                            scale=self.r0 * np.exp(expected_log_mean))
+        ax2.plot(final_rates, theoretical_pdf, 'r-', linewidth=2.5, label='Theoretical Lognormal')
+        
+        ax2.axvline(stats_dict['final_mean'], color='red', linestyle='--', linewidth=2, label='Mean')
+        ax2.axvline(stats_dict['final_median'], color='green', linestyle='--', linewidth=2, label='Median')
+        
+        ax2.set_xlabel('Interest Rate at T=10 years', fontsize=11, fontweight='bold')
+        ax2.set_ylabel('Density', fontsize=11, fontweight='bold')
+        ax2.set_title('Distribution of Final Interest Rates', fontsize=12, fontweight='bold')
+        ax2.legend(fontsize=10)
+        ax2.grid(True, alpha=0.3, axis='y')
+        
+        plt.tight_layout()
+        plt.show()
+
+# Run simulation
+simulator = DothanSimulator(r0=0.03, mu=0.02, sigma=0.15, T=10, dt=0.01)
+paths = simulator.simulate_paths(n_paths=5000, seed=42)
+stats_result = simulator.statistics(paths)
+
+# Display statistics
+print("=" * 60)
+print("DOTHAN MODEL SIMULATION RESULTS")
+print("=" * 60)
+print(f"\nParameters: r₀={simulator.r0:.2%}, μ={simulator.mu:.2%}, σ={simulator.sigma:.2%}")
+print(f"Horizon: {simulator.T} years, Time step: {simulator.dt:.2f} years ({simulator.n_steps} steps)")
+print(f"Paths: {paths.shape[1]}")
+print("\nFinal Rate Statistics (at T=10 years):")
+print(f"  Mean:     {stats_result['final_mean']:.4f} ({stats_result['final_mean']*100:.2f}%)")
+print(f"  Median:   {stats_result['final_median']:.4f} ({stats_result['final_median']*100:.2f}%)")
+print(f"  Std Dev:  {stats_result['final_std']:.4f} ({stats_result['final_std']*100:.2f}%)")
+print(f"  Min:      {stats_result['final_min']:.4f} ({stats_result['final_min']*100:.2f}%)")
+print(f"  Max:      {stats_result['final_max']:.4f} ({stats_result['final_max']*100:.2f}%)")
+
+# Visualize
+simulator.plot_paths(paths, n_sample=100)
+```
+
+---
+
+## Validation of Simulation
+
+### Check 1: Verify Lognormality
+
+Under the Dothan model, log-returns should be normally distributed:
+
+```{python}
+#| code-fold: true
+#| code-summary: "Validate lognormality"
+
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+
+# From simulated paths
+final_rates = paths[-1, :]
+log_returns = np.log(final_rates / 0.03)  # log(r_T / r_0)
+
+# Expected theoretical distribution
+expected_mean = (0.02 - 0.5 * 0.15**2) * 10
+expected_std = 0.15 * np.sqrt(10)
+
+# K-S test
+ks_stat, pvalue = stats.kstest(log_returns, 'norm', args=(expected_mean, expected_std))
+
+print(f"\nLognormality Test (Kolmogorov-Smirnov):")
+print(f"  KS Statistic: {ks_stat:.4f}")
+print(f"  p-value: {pvalue:.4f}")
+print(f"  Result: {'✓ PASS' if pvalue > 0.05 else '✗ FAIL'} (fail if p < 0.05)")
+
+# Visual check
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# Histogram of log-returns
+ax.hist(log_returns, bins=50, density=True, alpha=0.7, label='Simulated', color='skyblue')
+
+# Theoretical normal distribution
+x = np.linspace(log_returns.min(), log_returns.max(), 100)
+theoretical = stats.norm.pdf(x, expected_mean, expected_std)
+ax.plot(x, theoretical, 'r-', linewidth=2.5, label='Theoretical Normal')
+
+ax.set_xlabel('Log-return [log(r_T/r_0)]', fontsize=12, fontweight='bold')
+ax.set_ylabel('Density', fontsize=12, fontweight='bold')
+ax.set_title('Validation: Log-returns Should Be Normal\n(Dothan Model)', 
+             fontsize=13, fontweight='bold')
+ax.legend(fontsize=11)
+ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+```
+
+### Check 2: Verify Moments
+
+Compare simulated moments with theoretical:
+
+```{python}
+#| code-fold: true
+#| code-summary: "Compare simulated vs theoretical moments"
+
+import numpy as np
+import pandas as pd
+
+T = 10
+r0 = 0.03
+mu = 0.02
+sigma = 0.15
+
+# Theoretical moments (from the analytical solution)
+E_rT = r0 * np.exp(mu * T)
+Var_rT = r0**2 * np.exp(2 * mu * T) * (np.exp(sigma**2 * T) - 1)
+Std_rT = np.sqrt(Var_rT)
+
+# Simulated moments
+simulated_mean = final_rates.mean()
+simulated_std = final_rates.std()
+
+comparison = pd.DataFrame({
+    'Metric': ['Mean (μ)', 'Std Dev (σ)'],
+    'Theoretical': [E_rT, Std_rT],
+    'Simulated': [simulated_mean, simulated_std],
+    'Error %': [abs(simulated_mean - E_rT) / E_rT * 100,
+                abs(simulated_std - Std_rT) / Std_rT * 100]
+})
+
+print("\n Moment Validation:")
+print(comparison.to_string(index=False))
+```
+
+---
+
+## Parameter Sensitivity Studies
+
+### Effect of Volatility
+
+Vary $\sigma$ and observe impact on final rate distribution:
+
+```{python}
+#| code-fold: true
+#| code-summary: "Volatility sensitivity"
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+volatilities = [0.05, 0.10, 0.15, 0.20, 0.30]
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Left: Paths for different volatilities
+for sigma_val in volatilities:
+    sim = DothanSimulator(r0=0.03, mu=0.02, sigma=sigma_val, T=10, dt=0.01)
+    paths_vol = sim.simulate_paths(n_paths=500, seed=42)
+    stats_vol = sim.statistics(paths_vol)
+    axes[0].plot(sim.time_grid, stats_vol['mean_path'], linewidth=2.5, 
+                 label=f'σ={sigma_val:.2f}')
+
+axes[0].set_xlabel('Time (years)', fontsize=11, fontweight='bold')
+axes[0].set_ylabel('Mean Interest Rate', fontsize=11, fontweight='bold')
+axes[0].set_title('Mean Rate Path (Effect of Volatility)', fontsize=12, fontweight='bold')
+axes[0].legend()
+axes[0].grid(True, alpha=0.3)
+
+# Right: Final rate distributions
+for sigma_val in volatilities:
+    sim = DothanSimulator(r0=0.03, mu=0.02, sigma=sigma_val, T=10, dt=0.01)
+    paths_vol = sim.simulate_paths(n_paths=5000, seed=42)
+    axes[1].hist(paths_vol[-1, :], bins=50, alpha=0.5, density=True, 
+                label=f'σ={sigma_val:.2f}')
+
+axes[1].set_xlabel('Final Interest Rate', fontsize=11, fontweight='bold')
+axes[1].set_ylabel('Density', fontsize=11, fontweight='bold')
+axes[1].set_title('Distribution of Final Rates (Effect of Volatility)', fontsize=12, fontweight='bold')
+axes[1].legend()
+axes[1].grid(True, alpha=0.3, axis='y')
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Computational Efficiency Tips
+
+### Vectorization is Key
+
+**Slow (loops)**: Takes ~10 seconds for 100,000 paths
+```python
+for path in range(n_paths):
+    for t in range(n_steps):
+        r = r + drift + diffusion
+```
+
+**Fast (NumPy)**: Takes ~0.5 seconds
+```python
+Z = np.random.standard_normal((n_steps, n_paths))
+paths = r0 + np.cumsum(drift_term * Z, axis=0)
+```
+
+### Memory Considerations
+
+- **5000 paths × 1000 steps**: ~40 MB (manageable)
+- **100,000 paths × 1000 steps**: ~800 MB (consider careful)
+- **1 million paths**: ~8 GB (use batching)
+
+For large simulations, consider:
+```python
+def price_bonds_batched(n_paths_total, batch_size=10000):
+    for batch in range(0, n_paths_total, batch_size):
+        paths = simulate_paths(batch_size)
+        bond_prices = price_bonds(paths)
+        accumulate_results(bond_prices)
+```
+
+---
+
+## Summary
+
+✓ Implemented vectorized Dothan model simulator  
+✓ Generated 5000 interest rate paths  
+✓ Validated lognormality and moments  
+✓ Analyzed parameter sensitivity  
+✓ Optimized for computational efficiency  
+
+Next: Use these paths to **price bonds**!

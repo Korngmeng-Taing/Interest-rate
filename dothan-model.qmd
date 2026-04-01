@@ -1,0 +1,370 @@
+---
+title: "The Dothan Interest Rate Model"
+author: "Financial Risk Management"
+date: today
+---
+
+## Overview
+
+The **Dothan model** (Dothan, 1978) is a fundamental stochastic interest rate model where the short-term instantaneous interest rate $r_t$ evolves according to **geometric Brownian motion** (GBM). This model is elegant, tractable, and provides important insights into how interest rate uncertainty affects bond pricing.
+
+---
+
+## Mathematical Formulation
+
+### Continuous-Time Specification
+
+The Dothan model is specified by the following stochastic differential equation:
+
+$$dr_t = \mu r_t \, dt + \sigma r_t \, dW_t$$
+
+Where:
+- $dr_t$ = change in the short rate
+- $\mu$ = drift coefficient  
+- $\sigma$ = volatility coefficient
+- $dW_t$ = increment of Wiener process
+
+**Parameter Definitions**:
+
+| Symbol | Name | Interpretation | Typical Range |
+|--------|------|-----------------|----------------|
+| $r_t$ | Short-rate | Instantaneous risk-free interest rate at time $t$ | 0.01–0.10 |
+| $\mu$ | Drift | Expected percentage change per year | 0.01–0.05 |
+| $\sigma$ | Volatility | Standard deviation of percentage changes | 0.10–0.30 |
+| $dt$ | Time increment | Infinitesimal time step | — |
+| $dW_t$ | Wiener increment | Brownian motion shock, $N(0, dt)$ distributed | — |
+
+### Key Properties
+
+1. **Multiplicative Dynamics**: Changes are proportional to the current rate level
+
+   - If $r_t = 0.03$ and $\mu = 0.02$, the expected drift is $0.03 \times 0.02 = 0.0006$ per unit time
+   - Rates that are already high grow (in expectation) faster in absolute terms
+
+2. **Positive Rates**: Since the drift and diffusion terms are proportional to $r_t$, if $r_0 > 0$, then $r_t > 0$ for all $t$ almost surely
+
+   - This is more realistic than models that allow negative rates (though such models exist)
+
+3. **No Mean Reversion**: Unlike the Vasicek or CIR models, the Dothan model has no force pulling rates back toward a long-term mean
+
+   - This is both a limitation (unrealistic mean-reversion) and an advantage (simplicity)
+
+4. **Lognormal Distribution**: The rate $r_t$ follows a **lognormal distribution** conditional on $r_s$ for $t > s$
+
+---
+
+## Analytical Solution
+
+#### General Solution
+
+The Dothan model has a closed-form solution:
+
+$$r_t = r_0 \exp\left[ \left(\mu - \frac{\sigma^2}{2}\right) t + \sigma W_t \right]$$
+
+Where:
+
+- $r_0$ = initial rate
+- $W_t \sim N(0, t)$ = integrated Brownian motion
+- The factor $-\frac{\sigma^2}{2}$ is the **Itô correction term** (accounts for convexity in the exponential function)
+
+#### Implications
+
+Taking logarithms:
+
+$$\log r_t = \log r_0 + \left(\mu - \frac{\sigma^2}{2}\right) t + \sigma W_t$$
+
+This shows that $\log r_t$ follows a **normal distribution** (arithmetic Brownian motion), while $r_t$ itself follows a **lognormal distribution**.
+
+#### Expectation and Variance
+
+**Expected short rate**:
+
+$$E[r_t | r_0] = r_0 \exp(\mu t)$$
+
+The expected rate grows **exponentially** at rate $\mu$. This can be problematic for long horizons without mean reversion.
+
+**Variance of short rate**:
+
+$$\text{Var}(r_t | r_0) = r_0^2 \exp(2\mu t) \left[ \exp(\sigma^2 t) - 1 \right]$$
+
+Variance grows **exponentially**, which can make long-term forecasts very uncertain.
+
+---
+
+## Discretization for Simulation
+
+For numerical simulation, we discretize the continuous model using the **Euler-Maruyama scheme**:
+
+$$r_{t+\Delta t} = r_t + \mu r_t \Delta t + \sigma r_t \sqrt{\Delta t} \, Z$$
+
+Where:
+- $\Delta t$ = time step (e.g., 1 day = 1/252 year)
+- $Z \sim N(0,1)$ = standard normal random variable
+- All time units are in years
+
+### Practical Implementation Algorithm
+
+**Step 1: Initialize**
+```
+Set r₀ = 0.03 (initial rate, 3%)
+Set μ = 0.02 (drift, 2% per year)
+Set σ = 0.15 (volatility, 15% per year)
+Set T = 10 (time horizon, 10 years)
+Set dt = 0.01 (time step, ~2.5 trading days)
+```
+
+**Step 2: Generate Path**
+```
+For t = 1 to n_steps:
+    Generate Z ~ N(0,1)
+    Δr = μ * r[t-1] * dt + σ * r[t-1] * sqrt(dt) * Z
+    r[t] = r[t-1] + Δr
+```
+
+**Step 3: Repeat**
+```
+Generate M paths (e.g., M = 10,000) using different random seeds
+```
+
+---
+
+## Discretization Quality
+
+### Error Analysis
+
+The Euler-Maruyama scheme has a **weak convergence error** of $O(\Delta t)$. This means:
+- Smaller time steps $\Delta t$ → Better approximation
+- Doubling the number of steps roughly halves the error
+
+### Choosing the Time Step
+
+| $\Delta t$ | Steps/Year | Description | Use When |
+|-----------|-----------|-------------|----------|
+| 1/252 | 252 | Daily steps | Detailed path analysis, pricing path-dependent derivatives |
+| 0.01 | 100 | ~2.5 days | Standard for bond pricing, good balance |
+| 0.05 | 20 | ~2.5 weeks | Quick analysis, parameter studies |
+| 0.1 | 10 | ~1 month | Very rough, not recommended for pricing |
+
+**Recommendation**: Use $\Delta t = 0.01$ (approximately daily) for accurate bond pricing.
+
+---
+
+## Parameter Calibration
+
+### How to Estimate Parameters
+
+**1. Drift Parameter ($\mu$)**
+- Estimated from long-run average change in interest rates
+- Also depends on risk preferences (real-world vs. risk-neutral)
+- Typical value: 0.01 to 0.05 per year
+
+**2. Volatility Parameter ($\sigma$)**
+- Estimated from historical interest rate changes
+- Calculate daily/weekly changes and compute standard deviation
+- Annualize: $\sigma = \text{std}(\text{daily returns}) \times \sqrt{252}$
+- Typical value for short rates: 0.10 to 0.30 per year
+
+**3. Initial Rate ($r_0$)**
+- Use current market short rate (e.g., Federal Funds Rate in the US)
+- Or use current 3-month or 6-month Treasury rate
+- Must match model currency and conventions
+
+### Example Calibration
+
+```{python}
+#| code-fold: true
+#| code-summary: "Parameter calibration example"
+
+import numpy as np
+import pandas as pd
+
+# Simulate 5 years of daily interest rate data (for demonstration)
+np.random.seed(42)
+n_days = 5 * 252  # 5 years of daily data
+daily_returns = np.random.normal(0.00008, 0.005, n_days)  # Example: ~2% annual drift, 15% volatility
+rates_history = 0.03 * np.exp(np.cumsum(daily_returns))
+
+# Estimate parameters
+daily_log_returns = np.diff(np.log(rates_history))
+
+# Volatility: annualized std of log returns
+sigma_estimated = np.std(daily_log_returns) * np.sqrt(252)
+
+# Drift: annualized average log return (approximately)
+mu_estimated = np.mean(daily_log_returns) * 252
+
+# Initial rate
+r0_estimated = rates_history[0]
+
+print("Calibration Results:")
+print(f"Initial rate (r₀): {r0_estimated:.4f} ({r0_estimated*100:.2f}%)")
+print(f"Estimated drift (μ): {mu_estimated:.4f} ({mu_estimated*100:.2f}% per year)")
+print(f"Estimated volatility (σ): {sigma_estimated:.4f} ({sigma_estimated*100:.2f}% per year)")
+print(f"\nDescriptive Statistics:")
+print(f"Mean rate: {rates_history.mean():.4f}")
+print(f"Min rate: {rates_history.min():.4f}")
+print(f"Max rate: {rates_history.max():.4f}")
+```
+
+---
+
+## Advantages and Limitations
+
+### Advantages ✓
+
+1. **Analytical Tractability**: Closed-form solutions exist for bond prices
+2. **Simplicity**: Easy to understand and implement
+3. **Positive Rates**: Naturally ensures non-negative interest rates
+4. **Classic Model**: Historical importance; understood by practitioners
+5. **Computational Efficiency**: Fast to simulate and calibrate
+
+### Limitations ✗
+
+1. **No Mean Reversion**: Real interest rates exhibit mean reversion (tend to revert to historical averages)
+2. **Explosive Variance**: Variance grows exponentially, making long-horizon forecasts unrealistic
+3. **No Yield Curve**: Model only specifies the short rate; doesn't fully determine the yield curve
+4. **Parameter Sensitivity**: Small changes in parameters can dramatically affect long-term forecasts
+5. **Underpricing Options**: Relative to mean-reverting models, underprices interest rate options (less volatility in future than GBM predicts)
+
+### When to Use the Dothan Model
+
+- **Educational Projects**: Understanding stochastic rate models
+- **Short Time Horizons** (< 5 years): Reasonable approximation
+- **Parameter Studies**: Analyzing sensitivity to volatility and drift
+- **As a Benchmark**: Comparing other models against
+
+### When to Use Alternatives
+
+| Model | When to Use |
+|-------|-----------|
+| **Vasicek** | Mean reversion needed, longer horizons |
+| **CIR** | Positive rate structure important, mean reversion |
+| **Hull-White** | Fitting to yield curve critical |
+| **Black-Derman-Toy** | Tree-based pricing, American options |
+
+---
+
+## Simulation Example
+
+Here's a complete implementation of the Dothan model simulator:
+
+```{python}
+#| label: dothan-simulator
+#| code-fold: false
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+class DothanModel:
+    """Dothan interest rate model simulator"""
+    
+    def __init__(self, r0, mu, sigma, T, dt=0.01):
+        """
+        Initialize Dothan model
+        
+        Parameters:
+        -----------
+        r0 : float
+            Initial short rate (e.g., 0.03 for 3%)
+        mu : float
+            Drift parameter (e.g., 0.02 for 2% per year)
+        sigma : float
+            Volatility parameter (e.g., 0.15 for 15% per year)
+        T : float
+            Time horizon in years
+        dt : float
+            Time step (default 0.01, roughly daily)
+        """
+        self.r0 = r0
+        self.mu = mu
+        self.sigma = sigma
+        self.T = T
+        self.dt = dt
+        self.n_steps = int(T / dt)
+        self.time_grid = np.linspace(0, T, self.n_steps)
+    
+    def simulate_paths(self, n_paths, seed=None):
+        """
+        Simulate interest rate paths
+        
+        Parameters:
+        -----------
+        n_paths : int
+            Number of paths to simulate
+        seed : int, optional
+            Random seed for reproducibility
+        
+        Returns:
+        --------
+        paths : array of shape (n_steps, n_paths)
+            Simulated interest rate paths
+        """
+        if seed is not None:
+            np.random.seed(seed)
+        
+        paths = np.zeros((self.n_steps, n_paths))
+        paths[0, :] = self.r0
+        
+        # Simulation loop
+        for t in range(1, self.n_steps):
+            Z = np.random.standard_normal(n_paths)
+            drift = self.mu * paths[t-1, :] * self.dt
+            diffusion = self.sigma * paths[t-1, :] * np.sqrt(self.dt) * Z
+            paths[t, :] = paths[t-1, :] + drift + diffusion
+        
+        return paths
+    
+    def statistics(self, paths):
+        """Compute path statistics"""
+        return {
+            'mean_path': np.mean(paths, axis=1),
+            'std_path': np.std(paths, axis=1),
+            'percentile_5': np.percentile(paths, 5, axis=1),
+            'percentile_95': np.percentile(paths, 95, axis=1),
+            'final_mean': np.mean(paths[-1, :]),
+            'final_std': np.std(paths[-1, :])
+        }
+
+# Example: Simulate 100 paths
+dothan = DothanModel(r0=0.03, mu=0.02, sigma=0.15, T=10, dt=0.01)
+paths = dothan.simulate_paths(n_paths=100, seed=42)
+stats = dothan.statistics(paths)
+
+# Visualization
+fig, ax = plt.subplots(figsize=(12, 6))
+
+# Plot 100 paths
+ax.plot(dothan.time_grid, paths, alpha=0.2, linewidth=0.5, color='navy')
+
+# Plot mean and confidence bands
+ax.plot(dothan.time_grid, stats['mean_path'], 'r-', linewidth=2.5, label='Mean path')
+ax.fill_between(dothan.time_grid, 
+                 stats['percentile_5'], 
+                 stats['percentile_95'],
+                 alpha=0.2, color='red', label='5th-95th percentile')
+
+ax.set_xlabel('Time (years)', fontsize=12, fontweight='bold')
+ax.set_ylabel('Interest Rate', fontsize=12, fontweight='bold')
+ax.set_title('Dothan Model: Simulated Interest Rate Paths\n(r₀=3%, μ=2%, σ=15%)',
+             fontsize=13, fontweight='bold')
+ax.legend(fontsize=11, loc='best')
+ax.grid(True, alpha=0.3)
+ax.set_ylim([0, max(paths.max(), 0.15)])
+
+plt.tight_layout()
+plt.show()
+
+print(f"Final rate - Mean: {stats['final_mean']:.4f}, Std: {stats['final_std']:.4f}")
+```
+
+---
+
+## References
+
+- **Dothan, U. M.** (1978). "On the Term Structure of Interest Rates." *Journal of Financial Economics*, 6(2), 59-69.
+- **Vasicek, O. A., & Fong, H. G.** (1982). "Term Structure Modeling Using Exponential Splines." *The Journal of Finance*, 37(2), 339-356.
+- **Hull, J., & White, A.** (1990). "Pricing Interest-Rate-Derivative Securities." *Review of Financial Studies*, 3(4), 573-592.
+
+---
+
+Now that you understand the mathematical foundation, let's move to **pricing bonds** under this model!

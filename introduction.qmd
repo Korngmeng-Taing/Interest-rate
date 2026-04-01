@@ -1,0 +1,200 @@
+---
+title: "Introduction to Interest Rate Risk"
+author: "Financial Risk Management"
+date: today
+---
+
+## What is an Interest Rate?
+
+An **interest rate** is the cost of borrowing money or the reward for lending money, typically expressed as a percentage per annum. It represents the time value of money—the principle that money available today is worth more than the same amount in the future.
+
+### Key Characteristics
+
+- **Borrower's Perspective**: Interest rate is the cost of obtaining a loan
+
+- **Lender's Perspective**: Interest rate is the return on invested capital
+
+- **Market Determination**: Interest rates are determined by supply and demand in financial markets
+
+- **Variability**: Interest rates change continuously based on economic conditions, central bank policies, and market expectations
+
+### Types of Interest Rates
+
+| Type | Description | Example |
+|------|-------------|----------|
+| **Short-rate** | The instantaneous risk-free interest rate for infinitesimal time periods | 3.00% |
+| **Spot Rate** | Current interest rate for loans/bonds of various maturities | 5-year: 3.50% |
+| **Forward Rate** | Expected future interest rate agreed upon today | 1Y forward 5Y: 3.75% |
+| **Yield** | Annual return on a bond held to maturity | 10-year bond: 4.00% |
+
+---
+
+## Interest Rate Risk: The Core Problem
+
+**Interest rate risk** is one of the most critical sources of financial risk for:
+
+- **Banks** - Changes in rates directly affect net interest margins and asset values
+
+- **Insurance Companies** - Long-term liabilities are exposed to changing discount rates
+
+- **Fixed-Income Investors** - Bond portfolios lose value when interest rates rise
+
+- **Corporations** - Changes in rates affect borrowing costs and investment returns
+
+### The Bond Price-Interest Rate Relationship
+
+The relationship between interest rates and bond prices is **inverse and non-linear**:
+
+$$P(t,T) = \sum_{i=1}^{n} \frac{C}{(1+y)^{t_i}} + \frac{F}{(1+y)^{T}}$$
+
+Where:
+
+- $P(t,T)$ = Bond price at time $t$ for maturity $T$
+- $C$ = Coupon payment
+- $y$ = Yield to maturity (interest rate)
+- $F$ = Face value  
+- $t_i$ = Time of each coupon payment
+
+**Key Insight**: When interest rates increase by 1%, bond prices do NOT decrease by 1%; the relationship is convex. This non-linearity is critical for risk management.
+
+### Why This Matters
+
+```{python}
+#| label: bond-price-relationship
+#| code-fold: true
+#| code-summary: "Show bond price-yield relationship"
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Bond parameters
+Face_Value = 100
+Coupon_Rate = 0.05
+Maturity = 10
+coupon_payment = Face_Value * Coupon_Rate
+
+# Calculate bond prices for yields from 1% to 10%
+yields = np.linspace(0.01, 0.10, 100)
+bond_prices = []
+
+for y in yields:
+    # Present value of coupons
+    pv_coupons = sum([coupon_payment / (1 + y)**t for t in range(1, Maturity + 1)])
+    # Present value of face value
+    pv_face = Face_Value / (1 + y)**Maturity
+    bond_price = pv_coupons + pv_face
+    bond_prices.append(bond_price)
+
+# Plotting
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(yields * 100, bond_prices, linewidth=2.5, color='darkblue', label='Bond Price Curve')
+ax.axhline(y=100, color='red', linestyle='--', alpha=0.5, label='Par Value (100)')
+ax.axvline(x=5, color='green', linestyle='--', alpha=0.5, label='Coupon Rate (5%)')
+
+ax.set_xlabel('Yield to Maturity (%)', fontsize=12, fontweight='bold')
+ax.set_ylabel('Bond Price ($)', fontsize=12, fontweight='bold')
+ax.set_title('Bond Price vs. Interest Rate Relationship\n10-year Bond with 5% Coupon', 
+             fontsize=13, fontweight='bold')
+ax.grid(True, alpha=0.3)
+ax.legend(fontsize=11)
+ax.set_ylim([60, 140])
+
+plt.tight_layout()
+plt.show()
+
+print("Bond Price-Yield Relationship Example:")
+print(f"At 5% yield: ${bond_prices[50]:.2f}")
+print(f"At 4% yield: ${bond_prices[40]:.2f} (yield ↓ 1% → price ↑ ${bond_prices[40] - bond_prices[50]:.2f})")
+print(f"At 6% yield: ${bond_prices[60]:.2f} (yield ↑ 1% → price ↓ ${bond_prices[50] - bond_prices[60]:.2f})")
+```
+
+---
+
+## Interest Rate Modeling: The Need for Stochastic Models
+
+### Limitations of Deterministic Models
+
+Traditional approaches that assume constant interest rates are unrealistic because:
+
+1. **Empirical Evidence**: Interest rates exhibit mean reversion—they fluctuate but gravitates toward long-term averages
+2. **Volatility**: Rates can change unexpectedly due to economic shocks, policy changes, or changing market expectations
+3. **Path-Dependency**: The sequence of rate changes matters for path-dependent derivatives
+4. **Risk Measurement**: Deterministic models cannot quantify the distribution of possible outcomes
+
+### Stochastic Interest Rate Models
+
+**Stochastic models** treat interest rates as random variables that evolve over time. They model the short-term risk-free rate $r_t$ as a process governed by:
+
+$$dr_t = \mu(r_t, t) dt + \sigma(r_t, t) dW_t$$
+
+Where:
+- $dr_t$ = Change in the short rate
+- $\mu(r_t, t)$ = **Drift** (deterministic component—expected direction)
+- $\sigma(r_t, t)$ = **Volatility** (randomness magnitude)
+- $dW_t$ = **Wiener process increment** (random shock)
+
+### Popular Stochastic Models Hierarchy
+
+```
+├── Vasicek Model (1977) - Gaussian, mean-reverting
+├── CIR Model (1985) - Positive rates, mean-reverting
+├── Dothan Model (1978) - Geometric Brownian motion
+├── Black-Derman-Toy (1990) - Calibrated to yield curve
+└── Hull-White (1990) - Extended Vasicek with time-varying parameters
+```
+
+---
+
+## The Dothan Model: Introduction
+
+The **Dothan model**, introduced by Michael U. Dothan in 1978, is one of the earliest and most elegant stochastic interest rate models.
+
+### Key Features
+
+1. **Geometric Brownian Motion**: The short rate follows the same type of process as stock prices:
+   $$dr_t = \mu r_t dt + \sigma r_t dW_t$$
+
+2. **Intuitive Parameters**:
+   - $\mu$: Expected percentage drift (e.g., 2% per year)
+   - $\sigma$: Volatility (e.g., 15% per year)
+
+3. **Positive Rates** (under typical parameterizations): Since rates follow GBM, they remain positive
+
+4. **Simplicity**: Closed-form solutions exist for zero-coupon bond prices, making it tractable for analysis
+
+### Why Study the Dothan Model?
+
+:::{.callout-info}
+## Educational Value
+
+The Dothan model provides:
+- **Classic Foundation**: Historical importance in the development of interest rate modeling
+
+- **Analytical Tractability**: Allows detailed theoretical analysis
+
+- **Practical Insights**: Demonstrates how rate uncertainty propagates to bond valuations
+
+- **Simulation Foundation**: Easy to implement and extend for student projects
+:::
+
+### Applications in Risk Management
+
+Understanding how the Dothan model works enables practitioners to:
+
+- **Measure Interest Rate Risk**: Quantify potential losses from rate movements
+- **Price Derivatives**: Value interest rate options and complex securities
+- **Manage Portfolios**: Optimize hedge ratios and duration matching
+- **Stress Test**: Assess portfolio resilience to extreme rate scenarios
+
+---
+
+## Project Overview
+
+This project guides you through:
+
+1. **Learning** how the Dothan model works mathematically
+2. **Simulating** realistic interest rate paths under the model
+3. **Pricing** zero-coupon bonds using Monte Carlo methods
+4. **Analyzing** how bond prices respond to changes in parameters
+5. **Managing** interest rate risk in a fixed-income portfolio
+6. **Visualizing** results with professional graphics

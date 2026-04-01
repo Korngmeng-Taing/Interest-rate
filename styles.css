@@ -1,0 +1,887 @@
+/* ============================================
+   DOTHAN BOND PRICING PROJECT - ENHANCED STYLES
+   Colorful, Modern, Professional Design
+   ============================================ */
+
+:root {
+  /* Primary gradient colors */
+  --primary-color: #1f77b4;
+  --primary-light: #3b9cff;
+  --primary-dark: #0d4a9e;
+
+  /* Secondary colors */
+  --secondary-color: #ff7f0e;
+  --secondary-light: #ffb347;
+  --secondary-dark: #d65a00;
+
+  /* Accent colors */
+  --success-color: #2ca02c;
+  --success-light: #5ed95e;
+  --danger-color: #d62728;
+  --warning-color: #ff9800;
+  --info-color: #17a2b8;
+
+  /* Gradient colors */
+  --gradient-purple: #8e44ad;
+  --gradient-pink: #e91e63;
+  --gradient-cyan: #00bcd4;
+  --gradient-teal: #009688;
+
+  /* Neutral colors */
+  --light-gray: #f5f7fa;
+  --medium-gray: #ecf0f1;
+  --dark-gray: #34495e;
+  --border-color: #bdc3c7;
+
+  /* Backgrounds */
+  --bg-light: #ffffff;
+  --bg-accent: #f8f9fa;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(31, 119, 180, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(31, 119, 180, 0.6);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* ============================================
+   OVERALL STYLING
+   ============================================ */
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  line-height: 1.7;
+  color: var(--dark-gray);
+  background: linear-gradient(
+    135deg,
+    var(--bg-light) 0%,
+    var(--bg-accent) 100%
+  );
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* ============================================
+   HEADERS
+   ============================================ */
+
+h1 {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  animation: slideInLeft 0.6s ease-out;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: var(--primary-dark);
+  font-weight: 650;
+  font-size: 2em;
+  border-left: 5px solid var(--secondary-color);
+  padding-left: 1em;
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
+  animation: slideInLeft 0.5s ease-out;
+}
+
+h3 {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.5em;
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+}
+
+h4,
+h5,
+h6 {
+  color: var(--dark-gray);
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+/* ============================================
+   CODE STYLING
+   ============================================ */
+
+code {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border-left: 3px solid var(--primary-color);
+  font-family: "Fira Code", "Monaco", "Courier New", monospace;
+  font-size: 0.95em;
+  font-weight: 500;
+  color: var(--primary-dark);
+}
+
+pre > code {
+  padding: 15px;
+  display: block;
+  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+  color: #e8f5e9;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  line-height: 1.5;
+}
+
+pre > code::-webkit-scrollbar {
+  height: 8px;
+}
+
+pre > code::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 4px;
+}
+
+pre > code::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+pre > code::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-size: 0.98em;
+  animation: fadeIn 0.6s ease-out;
+}
+
+table thead {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-dark) 100%
+  );
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table tbody tr:hover {
+  background-color: #e3f2fd;
+  box-shadow: inset 4px 0 0 var(--secondary-color);
+  transform: translateX(2px);
+}
+
+table tbody tr:nth-child(even) {
+  background-color: var(--bg-accent);
+}
+
+table th,
+table td {
+  padding: 14px 18px;
+  text-align: left;
+}
+
+table th {
+  border-bottom: 3px solid var(--secondary-color);
+  font-size: 0.95em;
+}
+
+table td {
+  color: var(--dark-gray);
+}
+
+/* ============================================
+   CALLOUT BOXES
+   ============================================ */
+
+.callout {
+  padding: 18px 20px;
+  margin: 2em 0;
+  border-left: 5px solid var(--primary-color);
+  background: linear-gradient(
+    135deg,
+    rgba(31, 119, 180, 0.05) 0%,
+    rgba(255, 127, 14, 0.05) 100%
+  );
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: slideInRight 0.5s ease-out;
+  transition: all 0.3s ease;
+}
+
+.callout:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.callout-note,
+.callout-info {
+  border-left-color: var(--primary-color);
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border-left: 5px solid var(--info-color);
+}
+
+.callout-warning {
+  border-left-color: var(--warning-color);
+  background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%);
+  border-left: 5px solid var(--warning-color);
+}
+
+.callout-success {
+  border-left-color: var(--success-color);
+  background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
+  border-left: 5px solid var(--success-color);
+}
+
+.callout-danger {
+  border-left-color: var(--danger-color);
+  background: linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%);
+  border-left: 5px solid var(--danger-color);
+}
+
+.callout-tip {
+  border-left-color: var(--gradient-cyan);
+  background: linear-gradient(135deg, #e0f2f1 0%, #80deea 100%);
+  border-left: 5px solid var(--gradient-cyan);
+}
+
+/* ============================================
+   MATH EQUATIONS
+   ============================================ */
+
+.math {
+  display: inline-block;
+  background: linear-gradient(
+    135deg,
+    var(--light-gray) 0%,
+    var(--medium-gray) 100%
+  );
+  padding: 3px 8px;
+  border-radius: 4px;
+  border-left: 3px solid var(--secondary-color);
+  font-family: "TeX Gyre Termes", serif;
+}
+
+.math.display {
+  display: block;
+  padding: 20px;
+  margin: 1.5em 0;
+  text-align: center;
+  background: linear-gradient(
+    135deg,
+    rgba(31, 119, 180, 0.05) 0%,
+    rgba(255, 127, 14, 0.05) 100%
+  );
+  border-radius: 8px;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   NAVIGATION & SIDEBAR
+   ============================================ */
+
+.navbar {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-dark) 100%
+  );
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar {
+  background: linear-gradient(180deg, #f9f9f9 0%, #f0f0f0 100%);
+  border-right: 3px solid var(--primary-color);
+}
+
+.sidebar a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.sidebar a:hover {
+  color: var(--secondary-color);
+  background-color: rgba(31, 119, 180, 0.1);
+  transform: translateX(4px);
+}
+
+.sidebar .active {
+  background: linear-gradient(
+    135deg,
+    var(--primary-light) 0%,
+    var(--secondary-light) 100%
+  );
+  color: white !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--secondary-color),
+    var(--primary-color)
+  );
+  transition: width 0.3s ease;
+}
+
+a:hover {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+a:hover::after {
+  width: 100%;
+}
+
+/* ============================================
+   FIGURES & IMAGES
+   ============================================ */
+
+figure {
+  text-align: center;
+  margin: 2.5em 0;
+  animation: fadeIn 0.6s ease-out;
+}
+
+figcaption {
+  font-size: 0.95em;
+  color: var(--dark-gray);
+  margin-top: 0.8em;
+  font-style: italic;
+  font-weight: 500;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+  border: 2px solid var(--light-gray);
+}
+
+img:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
+}
+
+/* ============================================
+   LISTS
+   ============================================ */
+
+ul,
+ol {
+  margin: 1.5em 0;
+  padding-left: 2.5em;
+}
+
+li {
+  margin: 0.7em 0;
+  line-height: 1.8;
+}
+
+ul li::marker {
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
+ol li::marker {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* ============================================
+   BLOCKQUOTES
+   ============================================ */
+
+blockquote {
+  border-left: 5px solid var(--secondary-color);
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  color: var(--dark-gray);
+  font-style: italic;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 127, 14, 0.05) 0%,
+    rgba(31, 119, 180, 0.05) 100%
+  );
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+blockquote p {
+  margin: 0;
+  font-size: 1.05em;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+button,
+.btn {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-light) 100%
+  );
+  color: white;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(31, 119, 180, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button:hover,
+.btn:hover {
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color) 0%,
+    var(--secondary-light) 100%
+  );
+  box-shadow: 0 6px 20px rgba(255, 127, 14, 0.4);
+  transform: translateY(-2px);
+}
+
+button:active,
+.btn:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   GRID LAYOUT
+   ============================================ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5em;
+  margin: 2.5em 0;
+}
+
+.grid-item {
+  padding: 25px;
+  background: linear-gradient(135deg, white 0%, var(--bg-accent) 100%);
+  border-radius: 8px;
+  border: 2px solid var(--light-gray);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.grid-item:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  border-color: var(--secondary-color);
+}
+
+.grid-item h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+  margin-bottom: 0.8em;
+}
+
+.grid-item ul {
+  padding-left: 2em;
+}
+
+.grid-item li {
+  margin: 0.5em 0;
+}
+
+/* ============================================
+   CONTENT SECTIONS
+   ============================================ */
+
+.content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2em;
+  margin: 2em 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   HIGHLIGHTS & BADGES
+   ============================================ */
+
+.highlight {
+  background: linear-gradient(
+    120deg,
+    rgba(255, 193, 7, 0.3),
+    rgba(255, 127, 14, 0.3)
+  );
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 12px;
+  margin: 0 5px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-primary {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-light) 100%
+  );
+  color: white;
+}
+
+.badge-success {
+  background: linear-gradient(
+    135deg,
+    var(--success-color) 0%,
+    var(--success-light) 100%
+  );
+  color: white;
+}
+
+.badge-warning {
+  background: linear-gradient(
+    135deg,
+    var(--warning-color) 0%,
+    var(--secondary-light) 100%
+  );
+  color: white;
+}
+
+.badge-danger {
+  background: linear-gradient(
+    135deg,
+    var(--danger-color) 0%,
+    var(--secondary-color) 100%
+  );
+  color: white;
+}
+
+/* ============================================
+   HORIZONTAL DIVIDER
+   ============================================ */
+
+hr {
+  border: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--secondary-color),
+    var(--primary-color)
+  );
+  border-radius: 2px;
+  margin: 2em 0;
+}
+
+/* ============================================
+   TABLE OF CONTENTS
+   ============================================ */
+
+.toc {
+  background: linear-gradient(135deg, var(--bg-accent) 0%, white 100%);
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.toc-title {
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 1em;
+  font-size: 1.1em;
+}
+
+.toc a {
+  color: var(--primary-color);
+}
+
+.toc a:hover {
+  color: var(--secondary-color);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2em;
+  }
+
+  h2 {
+    font-size: 1.6em;
+  }
+
+  table {
+    font-size: 0.85em;
+  }
+
+  table th,
+  table td {
+    padding: 10px 12px;
+  }
+
+  code {
+    font-size: 0.9em;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5em;
+  }
+
+  .grid-item {
+    padding: 18px;
+  }
+
+  .callout {
+    padding: 15px;
+    margin: 1.5em 0;
+  }
+
+  button,
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.6em;
+  }
+
+  h2 {
+    font-size: 1.3em;
+    padding-left: 0.8em;
+    border-left: 4px solid var(--secondary-color);
+  }
+
+  h3 {
+    font-size: 1.2em;
+  }
+
+  body {
+    font-size: 0.95em;
+  }
+
+  table {
+    font-size: 0.8em;
+  }
+
+  .grid {
+    gap: 1em;
+  }
+}
+
+/* ============================================
+   PRINT STYLING
+   ============================================ */
+
+@media print {
+  body {
+    font-size: 11pt;
+    line-height: 1.5;
+    color: black;
+    background: white;
+  }
+
+  h1 {
+    page-break-before: always;
+    -webkit-text-fill-color: unset;
+    background: none;
+    color: var(--primary-dark);
+  }
+
+  h2,
+  h3,
+  h4 {
+    page-break-after: avoid;
+  }
+
+  figure {
+    page-break-inside: avoid;
+  }
+
+  table {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid black;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  button,
+  .btn {
+    display: none;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .navbar {
+    display: none;
+  }
+}
+
+/* ============================================
+   CARD STYLING FOR INDEX PAGE
+   ============================================ */
+
+.card {
+  display: block !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: left 0.3s ease;
+  z-index: 1;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+.card a {
+  position: relative;
+  z-index: 2;
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.card a:hover {
+  color: inherit !important;
+}
+
+.card a::after {
+  display: none !important;
+}
