@@ -26,7 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml
           pip install jupyter notebook jupyter-client ipython
-          pip install matplotlib numpy scipy pandas
+          pip install matplotlib numpy scipy pandas plotly scikit-learn
 
       - name: Render Quarto project
         uses: quarto-dev/quarto-actions/render@v2
