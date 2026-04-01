@@ -19,12 +19,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install matplotlib numpy scipy pandas
+          pip install jupyter matplotlib numpy scipy pandas pyyaml ipython
 
       - name: Render Quarto project
         uses: quarto-dev/quarto-actions/render@v2
